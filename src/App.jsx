@@ -135,7 +135,8 @@ const App = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/verses/random",
+        "https://daily-insight-server.onrender.com/api/verses/random",
+        // "http://localhost:5000/api/verses/random",
       );
       setVerseData(response.data);
     } catch (error) {
