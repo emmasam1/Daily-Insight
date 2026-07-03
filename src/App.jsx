@@ -184,7 +184,7 @@ const App = () => {
     toPng(cardRef.current, { cacheBust: true, pixelRatio: 3 })
       .then((dataUrl) => {
         const link = document.createElement("a");
-        link.download = `NaijaVibeBox-${verseData.fullBookName || verseData.book}.png`;
+        link.download = `DailyInsight-${verseData.fullBookName || verseData.book}.png`;
         link.href = dataUrl;
         link.click();
       })

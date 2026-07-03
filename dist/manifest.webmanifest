@@ -1,0 +1,1 @@
+{"name":"Daily Insight","short_name":"DailyInsight","description":"Your daily dose of wisdom and perspective.","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#000000","lang":"en","scope":"/","orientation":"portrait","icons":[{"src":"/logo.png","sizes":"192x192","type":"image/png"},{"src":"/logo.png","sizes":"512x512","type":"image/png"}]}
