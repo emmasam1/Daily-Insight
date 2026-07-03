@@ -148,11 +148,12 @@ const handleNextVerse = async () => {
       preloadNextVerse();
     } else {
       const response = await axios.get(
+        // "http://localhost:5000/api/verses/random"
         "https://daily-insight-server.onrender.com/api/verses/random"
       );
 
+      console.log(response)
       setVerseData(response.data);
-       console.log(verseData)
 
       // preload next one
       preloadNextVerse();
@@ -168,8 +169,10 @@ const handleNextVerse = async () => {
   const preloadNextVerse = async () => {
   try {
     const response = await axios.get(
-      "https://daily-insight-server.onrender.com/api/verses/random"
+      //  "http://localhost:5000/api/verses/random"
+        "https://daily-insight-server.onrender.com/api/verses/random"
     );
+     console.log(response)
 
     setNextVerse(response.data);
   } catch (error) {
