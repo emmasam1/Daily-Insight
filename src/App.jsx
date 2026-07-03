@@ -122,8 +122,9 @@ const App = () => {
   const [activeFontKey, setActiveFontKey] = useState("playfair");
 
   const cardRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [verseData, setVerseData] = useState(null);
+  const [nextVerse, setNextVerse] = useState(null);
 
   const selectedTheme = CARD_THEMES[activeThemeKey];
   // Safe lookup across the flat nested font registry
@@ -131,21 +132,51 @@ const App = () => {
     FONT_VAULT[activeCategory]?.options[activeFontKey] ||
     FONT_VAULT.serif.options.playfair;
 
-  const handleNextVerse = async () => {
-    setLoading(true);
-    try {
+const handleNextVerse = async () => {
+  if (loading) return;
+
+  setLoading(true);
+
+  try {
+    if (nextVerse) {
+      setVerseData(nextVerse);
+
+      // clear cache immediately
+      setNextVerse(null);
+
+      // fetch another verse in background
+      preloadNextVerse();
+    } else {
       const response = await axios.get(
-        "https://daily-insight-server.onrender.com/api/verses/random",
-        // "http://localhost:5000/api/verses/random",
+        "https://daily-insight-server.onrender.com/api/verses/random"
       );
+
       setVerseData(response.data);
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to stream next verse from vault.");
-    } finally {
-      setLoading(false);
+
+      // preload next one
+      preloadNextVerse();
     }
-  };
+  } catch (error) {
+    console.error(error);
+    message.error("Failed to stream next verse from vault.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const preloadNextVerse = async () => {
+  try {
+    const response = await axios.get(
+      "https://daily-insight-server.onrender.com/api/verses/random"
+    );
+
+    setNextVerse(response.data);
+  } catch (error) {
+    console.log("Preload failed");
+  }
+};
+
+// console.log(setVerseData)
 
   useEffect(() => {
     handleNextVerse();
@@ -261,7 +292,10 @@ const App = () => {
                       <div
                         className={`border-l-5 p-3 ${selectedTheme.accentBg} ${selectedTheme.border}`}
                       >
-                        <p  className={`mb-8 z-10 relative ${selectedFont.class}`} style={{ fontFamily: selectedFont.fontFamily }}>
+                        <p
+                          className={`mb-8 z-10 relative ${selectedFont.class}`}
+                          style={{ fontFamily: selectedFont.fontFamily }}
+                        >
                           {verseData.streetVibe}
                         </p>
                       </div>
