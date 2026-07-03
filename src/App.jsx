@@ -152,6 +152,7 @@ const handleNextVerse = async () => {
       );
 
       setVerseData(response.data);
+       console.log(verseData)
 
       // preload next one
       preloadNextVerse();
@@ -176,7 +177,7 @@ const handleNextVerse = async () => {
   }
 };
 
-// console.log(setVerseData)
+
 
   useEffect(() => {
     handleNextVerse();
