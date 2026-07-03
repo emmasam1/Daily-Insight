@@ -9,6 +9,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true, // Allows manifest detection during 'npm run dev'
+      },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}']
       },

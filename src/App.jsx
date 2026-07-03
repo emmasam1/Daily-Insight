@@ -10,6 +10,7 @@ import {
   Type,
 } from "lucide-react";
 import { toPng } from "html-to-image";
+import PWAInstallButton from "./components/PWAInstallButton";
 
 const CARD_THEMES = {
   stark: {
@@ -132,55 +133,82 @@ const App = () => {
     FONT_VAULT[activeCategory]?.options[activeFontKey] ||
     FONT_VAULT.serif.options.playfair;
 
-const handleNextVerse = async () => {
-  if (loading) return;
+// App.jsx
+const [installPrompt, setInstallPrompt] = useState(null);
 
-  setLoading(true);
+useEffect(() => {
+  const handler = (e) => {
+    e.preventDefault(); // Prevents automatic browser bar from appearing
+    setInstallPrompt(e); // Stores the event to trigger later
+  };
 
-  try {
-    if (nextVerse) {
-      setVerseData(nextVerse);
+  window.addEventListener("beforeinstallprompt", handler);
+  return () => window.removeEventListener("beforeinstallprompt", handler);
+}, []);
 
-      // clear cache immediately
-      setNextVerse(null);
-
-      // fetch another verse in background
-      preloadNextVerse();
-    } else {
-      const response = await axios.get(
-        // "http://localhost:5000/api/verses/random"
-        "https://daily-insight-server.onrender.com/api/verses/random"
-      );
-
-      console.log(response)
-      setVerseData(response.data);
-
-      // preload next one
-      preloadNextVerse();
-    }
-  } catch (error) {
-    console.error(error);
-    message.error("Failed to stream next verse from vault.");
-  } finally {
-    setLoading(false);
-  }
+const handleInstall = async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt(); // Triggers the browser install dialog[cite: 4]
+  const { outcome } = await installPrompt.userChoice;
+  if (outcome === 'accepted') setInstallPrompt(null);
 };
+
+// Inside your return() block:
+{installPrompt && (
+  <Button onClick={handleInstall} className="mt-4">
+    Install Daily Insight
+  </Button>
+)}
+
+
+
+  const handleNextVerse = async () => {
+    if (loading) return;
+
+    setLoading(true);
+
+    try {
+      if (nextVerse) {
+        setVerseData(nextVerse);
+
+        // clear cache immediately
+        setNextVerse(null);
+
+        // fetch another verse in background
+        preloadNextVerse();
+      } else {
+        const response = await axios.get(
+          // "http://localhost:5000/api/verses/random"
+          "https://daily-insight-server.onrender.com/api/verses/random",
+        );
+
+        // console.log(response)
+        setVerseData(response.data);
+
+        // preload next one
+        preloadNextVerse();
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to stream next verse from vault.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const preloadNextVerse = async () => {
-  try {
-    const response = await axios.get(
-      //  "http://localhost:5000/api/verses/random"
-        "https://daily-insight-server.onrender.com/api/verses/random"
-    );
-     console.log(response)
+    try {
+      const response = await axios.get(
+        //  "http://localhost:5000/api/verses/random"
+        "https://daily-insight-server.onrender.com/api/verses/random",
+      );
+      // console.log(response);
 
-    setNextVerse(response.data);
-  } catch (error) {
-    console.log("Preload failed");
-  }
-};
-
-
+      setNextVerse(response.data);
+    } catch (error) {
+      console.log("Preload failed");
+    }
+  };
 
   useEffect(() => {
     handleNextVerse();
@@ -311,7 +339,7 @@ const handleNextVerse = async () => {
                         Digital Scripture
                       </span>
                       <span className="text-[10px] font-mono tracking-widest font-black opacity-60">
-                        vibebox.app
+                        DailyInsight.app
                       </span>
                     </div>
                   </div>
@@ -385,6 +413,8 @@ const handleNextVerse = async () => {
               )}
             </div>
           </div>
+
+          <PWAInstallButton />
 
           {/* ACTION PIPELINE FOOTER */}
           <div className="grid grid-cols-2 gap-3 w-full mt-6">
