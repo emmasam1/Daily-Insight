@@ -248,7 +248,7 @@ const handleInstall = async () => {
     toPng(cardRef.current, { cacheBust: true, pixelRatio: 3 })
       .then((dataUrl) => {
         const link = document.createElement("a");
-        link.download = `DailyInsight-${verseData.fullBookName || verseData.book}.png`;
+        link.download = `DailyInsight-${verseData.book || verseData.book}.png`;
         link.href = dataUrl;
         link.click();
       })
@@ -312,13 +312,13 @@ const handleInstall = async () => {
                     <div className="z-10 relative">
                       <div className="flex justify-between items-center mb-6">
                         <span className="font-mono text-[13px] tracking-[0.2em] opacity-60 font-bold uppercase">
-                          {verseData.fullBookName} {verseData.chapter}:
+                          {verseData.book} {verseData.chapter}:
                           {verseData.verse}
                         </span>
                       </div>
 
                       <h2 className="text-sm leading-relaxed mb-6 font-sans opacity-90">
-                        "{verseData.officialPidgin}"
+                        "{verseData.officialEnglish}"
                       </h2>
 
                       <div
